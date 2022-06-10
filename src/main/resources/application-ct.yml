@@ -1,0 +1,14 @@
+server:
+  port: 9991
+spring:
+  datasource:
+    url: ${MARIA_DB_URL}
+    username: ${MARIA_DB_USER}
+    password: ${MARIA_DB_PASS}
+    initialization-mode: always
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    properties:
+      hibernate:
+        format_sql: true
