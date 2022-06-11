@@ -63,5 +63,8 @@ task componentTests(type: Test) {
     }
 }
 
+jar {
+    enabled = false
+}
 
 
