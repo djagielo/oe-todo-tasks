@@ -22,8 +22,8 @@ class TasksServiceComponentTests {
 
     @AfterEach
     fun cleanup() {
-        getProjects().forEach {
-            getTasksForProject(it).forEach {
+        getProjects().forEach {project ->
+            getTasksForProject(project).forEach {
                 doDeleteTask(it)
             }
         }
@@ -33,25 +33,6 @@ class TasksServiceComponentTests {
     class KMariaDBContainer(image: String) : MariaDBContainer<KMariaDBContainer>(image)
 
     companion object {
-//        private val oktaIssuer: String by lazy {
-//            System.getenv("CT_OKTA_ISSUER")
-//        }
-//
-//        private val clientId: String by lazy {
-//            System.getenv("CT_CLIENT_ID")
-//        }
-//
-//        private val clientSecret: String by lazy {
-//            System.getenv("CT_CLIENT_SECRET")
-//        }
-//
-//        private val testUser: String by lazy {
-//            System.getenv("CT_TEST_USER")
-//        }
-//
-//        private val testPassword: String by lazy {
-//            System.getenv("CT_TEST_PASSWORD")
-//        }
 
         private val circleBranch: String by lazy {
             System.getenv("CIRCLE_BRANCH")
@@ -60,13 +41,10 @@ class TasksServiceComponentTests {
         var network: Network = Network.newNetwork()
 
         val service: GenericContainer<*> =
-            KGenericContainer(DockerImageName.parse("bettercode.dev/overengineered-todo-tasks:${circleBranch}"))
+            KGenericContainer(DockerImageName.parse("bettercode.dev/oe-todo-tasks:${circleBranch}"))
                 .withNetwork(network)
-                .withExposedPorts(9999).withEnv(
+                .withExposedPorts(9991).withEnv(
                     mapOf(
-//                        "OKTA_CLIENT_ID" to clientId,
-//                        "OKTA_CLIENT_SECRET" to clientSecret,
-//                        "OKTA_ISSUER" to oktaIssuer,
                         "SPRING_PROFILES_ACTIVE" to "ct"
                     )
                 )
@@ -191,31 +169,6 @@ class TasksServiceComponentTests {
     }
 
         private fun client() =
-        given().baseUri("http://localhost:${service.getMappedPort(9999)}")
+        given().baseUri("http://localhost:${service.getMappedPort(9991)}")
             .contentType("application/json")
-
-//    private fun client() =
-//        given().auth().oauth2(accessToken).baseUri("http://localhost:${service.getMappedPort(9999)}")
-//            .contentType("application/json")
-//
-//    private val accessToken: String by lazy {
-//        given().headers(
-//            mapOf(
-//                "accept" to "application/json",
-//                "authorization" to "Basic ${Base64.encode("$clientId:$clientSecret")}",
-//            )
-//        )
-//            .contentType("application/x-www-form-urlencoded")
-//            .formParams(
-//                mapOf(
-//                    "grant_type" to "password",
-//                    "username" to testUser,
-//                    "password" to testPassword,
-//                    "scope" to "openid"
-//                )
-//            )
-//            .post("$oktaIssuer/v1/token")
-//            .then()
-//            .extract().body().jsonPath().get("access_token")
-//    }
 }
