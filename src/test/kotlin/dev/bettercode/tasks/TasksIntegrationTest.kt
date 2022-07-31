@@ -1,8 +1,5 @@
-package dev.bettercode.tasks.integration
+package dev.bettercode.tasks
 
-import dev.bettercode.tasks.TasksFixtures
-import dev.bettercode.tasks.TasksFacade
-import dev.bettercode.tasks.TasksTestConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

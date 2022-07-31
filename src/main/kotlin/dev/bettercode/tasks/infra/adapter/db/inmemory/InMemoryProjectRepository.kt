@@ -42,4 +42,8 @@ internal class InMemoryProjectRepository : ProjectRepository {
             return it
         }
     }
+
+    fun reset() {
+        db.clear()
+    }
 }

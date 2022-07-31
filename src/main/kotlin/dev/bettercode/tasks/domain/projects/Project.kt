@@ -10,7 +10,7 @@ internal open class Project(
     val name: String,
     val id: ProjectId = ProjectId(),
     private var status: ProjectStatus = ProjectStatus.NEW,
-    private var completionDate: Instant? = null
+    var completionDate: Instant? = null
 ) {
 
     val completed get() = this.status == ProjectStatus.COMPLETED

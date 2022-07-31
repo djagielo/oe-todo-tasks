@@ -30,4 +30,8 @@ internal class InMemoryTasksRepository : TasksRepository {
     override fun delete(id: TaskId) {
         db.remove(id.uuid)
     }
+
+    fun reset() {
+        db.clear()
+    }
 }

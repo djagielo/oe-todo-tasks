@@ -1,7 +1,9 @@
 package dev.bettercode.tasks
 
 import dev.bettercode.commons.events.AuditLogCommand
+import dev.bettercode.config.TestTasksConfiguration
 import dev.bettercode.tasks.application.projects.ProjectCompleted
+import dev.bettercode.tasks.application.projects.ProjectDeleted
 import dev.bettercode.tasks.application.projects.ProjectReopened
 import dev.bettercode.tasks.application.projects.TaskAssignedToProject
 import dev.bettercode.tasks.shared.InMemoryEventPublisher
@@ -13,11 +15,12 @@ internal class ProjectUseCases {
 
     private val inMemoryEventPublisher = InMemoryEventPublisher()
     private val tasksFacade: TasksFacade =
-        TasksConfiguration.tasksFacade(inMemoryEventPublisher = inMemoryEventPublisher)
+        TestTasksConfiguration.tasksFacade(inMemoryEventPublisher = inMemoryEventPublisher)
 
     @BeforeEach
     fun cleanUpEvents() {
         this.inMemoryEventPublisher.clear()
+        TestTasksConfiguration.resetAll()
     }
 
     @Test
@@ -38,6 +41,7 @@ internal class ProjectUseCases {
     fun `delete project`() {
         // given - a project of name BLOG
         val aProject = tasksFacade.addProject(ProjectDto("BLOG"))
+        assertThat(tasksFacade.getProjects()).hasSize(1)
 
         // when
         tasksFacade.deleteProject(aProject)
@@ -165,7 +169,7 @@ internal class ProjectUseCases {
         tasksFacade.add(task)
         // and a project that is completed
         val project = tasksFacade.addProject(ProjectDto(name = "COMPLETED"))
-        tasksFacade.completeProject(project)
+        tasksFacade.completeProject(project.id)
 
         // when - trying to assign task to non-existing project
         val result = tasksFacade.assignToProject(tasksFacade.getOpenInboxTasks().first(), project)
@@ -216,7 +220,7 @@ internal class ProjectUseCases {
         val project = tasksFacade.addProject(ProjectDto("PROJECT TO BE COMPLETED"))
 
         // when - trying to complete it again
-        val result = tasksFacade.completeProject(project)
+        val result = tasksFacade.completeProject(project.id)
 
         // then - should success and emit event
         assertThat(result.successful).isTrue
@@ -237,10 +241,10 @@ internal class ProjectUseCases {
     fun `completed project can be reopened at any time`() {
         // given - an empty project to be completed
         val project = tasksFacade.addProject(ProjectDto("PROJECT TO BE REOPENED"))
-        tasksFacade.completeProject(project)
+        tasksFacade.completeProject(project.id)
 
         // when - trying to complete it again
-        val result = tasksFacade.reopenProject(project)
+        val result = tasksFacade.reopenProject(project.id)
 
         // then - should success and emit event
         assertThat(result.successful).isTrue
@@ -264,10 +268,10 @@ internal class ProjectUseCases {
         // given - a project that's completed
         val project = tasksFacade.addProject(ProjectDto("COMPLETED_PROJECT"))
         // and a task gets reopened
-        tasksFacade.completeProject(project)
+        tasksFacade.completeProject(project.id)
 
         // when - trying to complete it again
-        val result = tasksFacade.completeProject(project)
+        val result = tasksFacade.completeProject(project.id)
 
         // then - failure with proper reason should be returned
         assertThat(result.successful).isFalse
@@ -275,11 +279,43 @@ internal class ProjectUseCases {
     }
 
 
-    // project deletion with forced flag deletes its tasks also
+    @Test
+    fun `project deletion with forced=true flag should propagate that flag to event`() {
+        // given - a project
+        val newProject = tasksFacade.addProject(ProjectDto("NEW_PROJECT"))
+        val tasks = TasksFixtures.aNoOfTasks(10)
+        tasks.forEach {
+            tasksFacade.add(it)
+            tasksFacade.addToProject(it, newProject)
+        }
 
-    // project deletion without forced flag moves open tasks to INBOX
+        // when
+        tasksFacade.deleteProject(newProject, forced = true)
 
-    // project completion with special flag completes its tasks also
+        // then - failure with proper reason should be returned
+        assertThat(inMemoryEventPublisher.events).contains(
+            ProjectDeleted(newProject.id, forced = true)
+        )
+    }
 
-    // project completion without flag moves open tasks to INBOX
+    @Test
+    fun `project deletion without forced flag should propagate that flag to event`() {
+        // given - a project
+        val newProject = tasksFacade.addProject(ProjectDto("NEW_PROJECT"))
+        val tasks = TasksFixtures.aNoOfTasks(10)
+        tasks.forEach {
+            tasksFacade.add(it)
+            tasksFacade.addToProject(it, newProject)
+        }
+
+        // when
+        tasksFacade.deleteProject(newProject, forced = false)
+
+
+        // then - failure with proper reason should be returned
+        assertThat(tasksFacade.getProject(newProject.id)).isNull()
+        assertThat(inMemoryEventPublisher.events).contains(
+            ProjectDeleted(newProject.id, forced = false)
+        )
+    }
 }

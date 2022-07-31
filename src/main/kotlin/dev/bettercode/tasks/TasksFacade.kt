@@ -80,12 +80,12 @@ open class TasksFacade internal constructor(
         return ProjectDto.from(projectService.add(Project(name = project.name)))!!
     }
 
-    fun deleteProject(project: ProjectDto) {
-        deleteProject(project.id)
+    fun deleteProject(project: ProjectDto, forced: Boolean = false) {
+        deleteProject(projectId = project.id, forced = forced)
     }
 
-    fun deleteProject(projectId: ProjectId) {
-        projectService.delete(projectId)
+    fun deleteProject(projectId: ProjectId, forced: Boolean = false) {
+        projectService.delete(projectId, forced = forced)
     }
 
     fun assignToProject(task: TaskDto, project: ProjectDto): DomainResult {
@@ -118,12 +118,12 @@ open class TasksFacade internal constructor(
         return ProjectDto.from(projectService.getInboxProject())
     }
 
-    fun completeProject(project: ProjectDto): DomainResult {
-        return projectCompletionService.complete(project.id)
+    fun completeProject(project: ProjectId): DomainResult {
+        return projectCompletionService.complete(project)
     }
 
-    fun reopenProject(project: ProjectDto): DomainResult {
-        return projectCompletionService.reopen(project.id)
+    fun reopenProject(projectId: ProjectId): DomainResult {
+        return projectCompletionService.reopen(projectId)
     }
 
     fun getAllWithoutDueDate(pageable: Pageable = PageRequest.of(0, 100)): Page<TaskDto> {

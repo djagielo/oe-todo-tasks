@@ -15,8 +15,9 @@ internal class ProjectService(
         return result
     }
 
-    fun delete(projectId: ProjectId) {
+    fun delete(projectId: ProjectId, forced: Boolean = false) {
         projectRepository.delete(projectId)
+        eventPublisher.publish(ProjectDeleted(projectId, forced = forced))
     }
 
     fun getInboxProject(): Project {

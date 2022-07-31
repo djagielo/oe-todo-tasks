@@ -21,9 +21,9 @@ internal class JdbcProjectRepository(private val jdbcTemplate: JdbcTemplate) : P
 
     override fun get(projectId: ProjectId): Project? {
         return jdbcTemplate.queryForObject(
-            "select id,name from projects where id=?",
+            "select id, name from projects p where p.id=?",
             mapRowToProject(),
-            arrayOf(projectId.uuid.toString())
+            projectId.uuid.toString()
         )
     }
 
@@ -42,8 +42,10 @@ internal class JdbcProjectRepository(private val jdbcTemplate: JdbcTemplate) : P
 
     override fun save(project: Project) {
         jdbcTemplate.update(
-            "insert into projects(id,name) values (?,?);",
-            project.id.uuid.toString(), project.name
+            "update projects set name=?, completion_date=? where id=?",
+            project.name,
+            project.completionDate,
+            project.id.uuid.toString()
         )
     }
 
