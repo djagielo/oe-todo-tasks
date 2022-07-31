@@ -38,7 +38,7 @@ class TasksServiceComponentTests {
             System.getenv("CIRCLE_BRANCH")
         }
 
-        var network: Network = Network.newNetwork()
+        private var network: Network = Network.newNetwork()
 
         val service: GenericContainer<*> =
             KGenericContainer(DockerImageName.parse("bettercode.dev/oe-todo-tasks:${circleBranch}"))
@@ -51,7 +51,7 @@ class TasksServiceComponentTests {
                 .waitingFor(Wait.forHttp("/actuator/health"))
 
 
-        val db: MariaDBContainer<*> = KMariaDBContainer("mariadb:10.6")
+        private val db: MariaDBContainer<*> = KMariaDBContainer("mariadb:10.6")
             .withNetwork(network)
             .withNetworkAliases("mariadb")
 

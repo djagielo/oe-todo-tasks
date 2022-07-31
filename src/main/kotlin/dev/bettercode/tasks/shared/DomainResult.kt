@@ -16,7 +16,7 @@ class DomainResult private constructor(private val result: Either<Failure, Succe
             return success(listOf(event))
         }
 
-        fun success(events: List<DomainEvent>): DomainResult {
+        private fun success(events: List<DomainEvent>): DomainResult {
             return DomainResult(right(Success(events)))
         }
 
