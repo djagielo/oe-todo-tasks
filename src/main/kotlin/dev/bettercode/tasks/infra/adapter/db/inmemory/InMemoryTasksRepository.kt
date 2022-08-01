@@ -1,8 +1,8 @@
 package dev.bettercode.tasks.infra.adapter.db.inmemory
 
 import dev.bettercode.tasks.TaskId
-import dev.bettercode.tasks.domain.tasks.Task
-import dev.bettercode.tasks.domain.tasks.TasksRepository
+import dev.bettercode.tasks.domain.Task
+import dev.bettercode.tasks.domain.TasksRepository
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 

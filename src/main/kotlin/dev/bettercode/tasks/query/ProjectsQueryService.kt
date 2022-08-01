@@ -1,8 +1,8 @@
 package dev.bettercode.tasks.query
 
-import dev.bettercode.tasks.ProjectDto
-import dev.bettercode.tasks.ProjectId
-import dev.bettercode.tasks.infra.adapter.db.ProjectsQueryRepository
+import dev.bettercode.projects.ProjectDto
+import dev.bettercode.projects.ProjectId
+import dev.bettercode.projects.infra.adapter.db.jdbc.ProjectsQueryRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable

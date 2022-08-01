@@ -3,6 +3,8 @@
 package dev.bettercode.tasks.infra.adapter.rest
 
 import dev.bettercode.commons.paging.PageResult
+import dev.bettercode.projects.ProjectId
+import dev.bettercode.projects.ProjectsFacade
 import dev.bettercode.tasks.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -14,7 +16,7 @@ import java.net.URI
 import java.util.*
 
 @RestController
-class TasksController(val tasksFacade: TasksFacade) {
+class TasksController(val tasksFacade: TasksFacade, val projectsFacade: ProjectsFacade) {
     val logger: Logger = LoggerFactory.getLogger(TasksController::class.java)
 
     @GetMapping("/tasks/{id}")
@@ -62,54 +64,16 @@ class TasksController(val tasksFacade: TasksFacade) {
             tasksFacade.reopenTask(TaskId(id))
     }
 
-    @GetMapping("/projects")
-    internal fun getAllProjects(): ResponseEntity<PageResult<ProjectDto>> {
-        return ResponseEntity.ok(PageResult(tasksFacade.getProjects()))
-    }
-
-    @PostMapping("/projects")
-    internal fun createProject(@RequestBody projectDto: ProjectDto) {
-        tasksFacade.addProject(projectDto)
-    }
-
-    @GetMapping("/projects/{id}")
-    internal fun getProject(@PathVariable id: UUID): ResponseEntity<ProjectDto> {
-        return tasksFacade.getProject(ProjectId(id))?.let {
-            ResponseEntity.ok(it)
-        } ?: ResponseEntity.notFound().build()
-    }
-
-    @DeleteMapping("/projects/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    internal fun deleteProject(@PathVariable id: UUID) {
-        tasksFacade.deleteProject(ProjectId(id))
-    }
-
-    @PutMapping("/projects/{id}/completed")
-    internal fun completeProject(@PathVariable id: UUID, @RequestBody status: Boolean): ResponseEntity<Boolean> {
-        val result = if (status) {
-            tasksFacade.completeProject(ProjectId(id))
-        } else {
-            tasksFacade.reopenProject(ProjectId(id))
-        }
-
-        return if (result.successful) {
-            ResponseEntity.ok(true)
-        } else {
-            ResponseEntity.badRequest().build()
-        }
-    }
-
     @GetMapping("/projects/{id}/tasks")
     internal fun getTasksForProject(@PathVariable id: UUID): ResponseEntity<PageResult<TaskDto>> {
-        return tasksFacade.getProject(ProjectId(id))?.let {
+        return projectsFacade.getProject(ProjectId(id))?.let {
             ResponseEntity.ok(PageResult(tasksFacade.getTasksForProject(PageRequest.of(0, 100), it.id)))
         } ?: ResponseEntity.notFound().build()
     }
 
     @PostMapping("/projects/{id}/tasks")
     internal fun addTaskToProject(@PathVariable id: UUID, @RequestBody task: TaskRequest): ResponseEntity<TaskDto> {
-        return tasksFacade.getProject(ProjectId(id))?.let { project ->
+        return projectsFacade.getProject(ProjectId(id))?.let { project ->
             ResponseEntity.ok(tasksFacade.addToProject(task.toTaskDto(), project))
         } ?: ResponseEntity.notFound().build()
     }

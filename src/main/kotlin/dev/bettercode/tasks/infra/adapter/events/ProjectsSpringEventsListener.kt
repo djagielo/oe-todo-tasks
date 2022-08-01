@@ -1,10 +1,10 @@
 package dev.bettercode.tasks.infra.adapter.events
 
-import dev.bettercode.tasks.application.projects.ProjectCompleted
-import dev.bettercode.tasks.application.projects.ProjectDeleted
-import dev.bettercode.tasks.application.projects.ProjectReopened
-import dev.bettercode.tasks.application.tasks.ProjectCompletedHandler
-import dev.bettercode.tasks.application.tasks.ProjectDeletedHandler
+import dev.bettercode.projects.application.ProjectCompleted
+import dev.bettercode.projects.application.ProjectDeleted
+import dev.bettercode.projects.application.ProjectReopened
+import dev.bettercode.tasks.application.ProjectCompletedHandler
+import dev.bettercode.tasks.application.ProjectDeletedHandler
 import org.springframework.context.event.EventListener
 
 internal class ProjectsSpringEventsListener(private val projectDeletedHandler: ProjectDeletedHandler, private val projectCompletedHandler: ProjectCompletedHandler) {

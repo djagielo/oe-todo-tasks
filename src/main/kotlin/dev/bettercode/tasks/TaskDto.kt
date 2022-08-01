@@ -1,7 +1,7 @@
 package dev.bettercode.tasks
 
-import dev.bettercode.tasks.domain.tasks.Task
-import dev.bettercode.tasks.infra.adapter.db.TaskEntity
+import dev.bettercode.tasks.domain.Task
+import dev.bettercode.tasks.infra.adapter.db.jdbc.TaskEntity
 import java.time.Instant
 import java.time.LocalDate
 
