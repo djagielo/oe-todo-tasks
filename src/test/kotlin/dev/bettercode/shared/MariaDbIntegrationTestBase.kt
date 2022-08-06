@@ -1,7 +1,6 @@
 package dev.bettercode.shared
 
 import dev.bettercode.componentTests.TasksServiceComponentTests
-import dev.bettercode.tasks.integration.TasksIntegrationTestBase
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
@@ -17,18 +16,8 @@ open class MariaDbIntegrationTestBase {
         ApplicationContextInitializer<ConfigurableApplicationContext?> {
         override fun initialize(applicationContext: ConfigurableApplicationContext) {
             TestPropertyValues.of(
-                "spring.datasource.url=${db.jdbcUrl}",
+                "spring.datasource.url=jdbc:tc:mariadb:10.6:///",
             ).applyTo(applicationContext)
         }
-    }
-
-    companion object {
-        @Container
-        private val db: MariaDBContainer<*> = TasksServiceComponentTests.KMariaDBContainer("mariadb:10.6")
-            .withNetworkAliases("mariadb").withExposedPorts(3306).withEnv(
-                mapOf(
-                    "MARIADB_ROOT_PASSWORD" to "password"
-                )
-            )
     }
 }

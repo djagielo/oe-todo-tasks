@@ -15,7 +15,7 @@ import org.springframework.data.domain.Pageable
 
 
 @SpringBootTest
-class TasksIntegrationTestBase: MariaDbIntegrationTestBase() {
+class TasksIntegrationTests: MariaDbIntegrationTestBase() {
 
     @Autowired
     lateinit var tasksFacade: TasksFacade
