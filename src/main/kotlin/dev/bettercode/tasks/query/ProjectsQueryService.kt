@@ -19,4 +19,10 @@ internal class ProjectsQueryService(private val projectsQueryRepository: Project
             ProjectDto.from(it)
         }
     }
+
+    fun getAllOpen(pageable: Pageable = PageRequest.of(0, 100)): Page<ProjectDto> {
+        return projectsQueryRepository.findAllOpen(pageable).map {
+            ProjectDto.from(it)
+        }
+    }
 }

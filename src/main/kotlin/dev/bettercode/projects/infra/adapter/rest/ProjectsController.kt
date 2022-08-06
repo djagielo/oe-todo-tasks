@@ -12,8 +12,8 @@ import java.util.*
 @RestController
 class ProjectsController(private val projectsFacade: ProjectsFacade) {
     @GetMapping("/projects")
-    internal fun getAllProjects(): ResponseEntity<PageResult<ProjectDto>> {
-        return ResponseEntity.ok(PageResult(projectsFacade.getProjects()))
+    internal fun getOpenProjects(): ResponseEntity<PageResult<ProjectDto>> {
+        return ResponseEntity.ok(PageResult(projectsFacade.getOpenProjects()))
     }
 
     @PostMapping("/projects")

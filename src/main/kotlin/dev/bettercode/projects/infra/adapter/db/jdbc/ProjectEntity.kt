@@ -1,6 +1,7 @@
 package dev.bettercode.projects.infra.adapter.db.jdbc
 
 import org.hibernate.annotations.Type
+import java.time.Instant
 import java.util.*
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -12,5 +13,6 @@ class ProjectEntity(
     @Id
     @Type(type="uuid-char")
     val id: UUID = UUID.randomUUID(),
-    val name: String = ""
+    val name: String = "",
+    val completionDate: Instant? = null
 )

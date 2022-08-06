@@ -15,4 +15,6 @@ interface ProjectsQueryRepository : Repository<ProjectEntity, UUID> {
 
     @Query("select p from ProjectEntity p where p.id= :projectId")
     fun findById(@Param("projectId") uuid: UUID): ProjectEntity?
+    @Query("select p from ProjectEntity p where p.completionDate is null")
+    fun findAllOpen(pageable: Pageable): Page<ProjectEntity>
 }

@@ -32,4 +32,10 @@ internal class InMemoryProjectsQueryRepository(
             mapper.toEntity(it)
         }
     }
+
+    override fun findAllOpen(pageable: Pageable): Page<ProjectEntity> {
+        return listToPage(
+            db.getAll().filter { !it.completed }.map { mapper.toEntity(it) }, pageable
+        )
+    }
 }

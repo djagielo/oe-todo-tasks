@@ -30,13 +30,13 @@ internal class ProjectUseCases {
     @Test
     fun `create project`() {
         // given - empty system
-        assertThat(projectsFacade.getProjects()).isEmpty()
+        assertThat(projectsFacade.getAllProjects()).isEmpty()
 
         // when
         projectsFacade.addProject(ProjectDto("BLOG"))
 
         // then
-        val projects = projectsFacade.getProjects()
+        val projects = projectsFacade.getAllProjects()
         assertThat(projects).hasSize(1)
         assertThat(projects.map { it.name }).hasSameElementsAs(listOf("BLOG"))
     }
@@ -45,13 +45,13 @@ internal class ProjectUseCases {
     fun `delete project`() {
         // given - a project of name BLOG
         val aProject = projectsFacade.addProject(ProjectDto("BLOG"))
-        assertThat(projectsFacade.getProjects()).hasSize(1)
+        assertThat(projectsFacade.getAllProjects()).hasSize(1)
 
         // when
         projectsFacade.deleteProject(aProject)
 
         // then
-        assertThat(projectsFacade.getProjects()).hasSize(0)
+        assertThat(projectsFacade.getAllProjects()).hasSize(0)
     }
 
     @Test
@@ -99,13 +99,13 @@ internal class ProjectUseCases {
     @Test
     fun `tasks by default get created in INBOX project`() {
         // given - no projects
-        assertThat((projectsFacade.getProjects())).isEmpty()
+        assertThat((projectsFacade.getAllProjects())).isEmpty()
         // and 5 tasks created
         val tasks = TasksFixtures.aNoOfTasks(5)
         tasks.forEach { tasksFacade.add(it) }
 
         // when - asking for projects
-        val projects = projectsFacade.getProjects()
+        val projects = projectsFacade.getAllProjects()
 
         // then - it should have INBOX projects created
         assertThat(projects).hasSize(1)
@@ -129,7 +129,7 @@ internal class ProjectUseCases {
         tasksFacade.assignToProject(tasksFacade.getOpenInboxTasks().first(), privProject)
 
         // then - there should be total of 2 projects
-        val projects = projectsFacade.getProjects()
+        val projects = projectsFacade.getAllProjects()
         assertThat(projects).hasSize(2)
         assertThat(projects.map { it.name }).containsExactlyInAnyOrder("INBOX", "PRIV")
 

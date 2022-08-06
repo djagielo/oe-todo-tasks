@@ -24,8 +24,12 @@ open class ProjectsFacade internal constructor(
         return projectsQueryService.findById(projectId)
     }
 
-    fun getProjects(): Page<ProjectDto> {
+    fun getAllProjects(): Page<ProjectDto> {
         return projectsQueryService.getAll()
+    }
+
+    fun getOpenProjects(): Page<ProjectDto> {
+        return projectsQueryService.getAllOpen()
     }
 
     fun addProject(project: ProjectDto): ProjectDto {

@@ -1,30 +1,21 @@
 package dev.bettercode.tasks.integration
 
-import dev.bettercode.componentTests.TasksServiceComponentTests
 import dev.bettercode.fixtures.TasksFixtures
 import dev.bettercode.projects.ProjectDto
 import dev.bettercode.projects.ProjectsFacade
+import dev.bettercode.shared.MariaDbIntegrationTestBase
 import dev.bettercode.tasks.TasksFacade
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.util.TestPropertyValues
-import org.springframework.context.ApplicationContextInitializer
-import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
-import org.springframework.test.context.ContextConfiguration
-import org.testcontainers.containers.MariaDBContainer
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
 
 
 @SpringBootTest
-@Testcontainers
-@ContextConfiguration(initializers = [TasksIntegrationTest.EnvInitializer::class])
-class TasksIntegrationTest {
+class TasksIntegrationTestBase: MariaDbIntegrationTestBase() {
 
     @Autowired
     lateinit var tasksFacade: TasksFacade
@@ -32,30 +23,12 @@ class TasksIntegrationTest {
     @Autowired
     lateinit var projectsFacade: ProjectsFacade
 
-    class EnvInitializer :
-        ApplicationContextInitializer<ConfigurableApplicationContext?> {
-        override fun initialize(applicationContext: ConfigurableApplicationContext) {
-            TestPropertyValues.of(
-                "spring.datasource.url=${db.jdbcUrl}",
-            ).applyTo(applicationContext)
-        }
-    }
 
     @AfterEach
     fun afterEach() {
         tasksFacade.getAllOpen(Pageable.ofSize(100)).forEach {
             tasksFacade.delete(it.id)
         }
-    }
-
-    companion object {
-        @Container
-        private val db: MariaDBContainer<*> = TasksServiceComponentTests.KMariaDBContainer("mariadb:10.6")
-            .withNetworkAliases("mariadb").withExposedPorts(3306).withEnv(
-                mapOf(
-                    "MARIADB_ROOT_PASSWORD" to "password"
-                )
-            )
     }
 
     @Test
