@@ -35,7 +35,7 @@ class ProjectDeletionTests {
         initialTasks.forEach {
             tasksFacade.addToProject(it, projectToDelete)
         }
-        assertThat(tasksFacade.getTasksForProject(Pageable.ofSize(10), projectToDelete)).hasSize(3)
+        assertThat(tasksFacade.getOpenTasksForProject(Pageable.ofSize(10), projectToDelete)).hasSize(3)
 
         // when
         projectDeletedHandler.handle(ProjectDeleted(projectToDelete.id, forced = true))
@@ -55,7 +55,7 @@ class ProjectDeletionTests {
         initialTasks.forEach {
             tasksFacade.addToProject(it, projectToDelete)
         }
-        assertThat(tasksFacade.getTasksForProject(Pageable.ofSize(10), projectToDelete)).hasSize(3)
+        assertThat(tasksFacade.getOpenTasksForProject(Pageable.ofSize(10), projectToDelete)).hasSize(3)
 
         // when
         projectDeletedHandler.handle(ProjectDeleted(projectToDelete.id, forced = false))

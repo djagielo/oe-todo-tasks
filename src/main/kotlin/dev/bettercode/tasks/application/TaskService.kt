@@ -31,7 +31,7 @@ internal class TaskService(
     fun addTaskForAProject(task: Task, projectId: ProjectId): Task? {
         return projectRepository.get(projectId)?.let {
             task.assignTo(it)
-            return tasksRepository.save(task)
+            return tasksRepository.add(task)
         }
     }
 

@@ -32,7 +32,6 @@ dependencies {
 
     implementation("io.vavr:vavr:0.10.4")
 
-    runtimeOnly("com.h2database:h2")
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 
     testImplementation('io.rest-assured:spring-mock-mvc-kotlin-extensions:5.1.1')

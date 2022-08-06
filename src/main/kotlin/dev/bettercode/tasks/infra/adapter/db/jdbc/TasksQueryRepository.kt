@@ -13,7 +13,7 @@ interface TasksQueryRepository : Repository<TaskEntity, UUID> {
 
     fun findAllByProjectId(pageable: Pageable, uuid: UUID): Page<TaskEntity>
 
-    @Query("select t from TaskEntity t where t.projectId= :projectId ")
+    @Query("select t from TaskEntity t where t.projectId= :projectId and t.completionDate is null")
     fun findAllOpenForProject(pageable: Pageable, @Param("projectId") uuid: UUID): Page<TaskEntity>
 
     @Query("select t from TaskEntity t where t.completionDate is not null")

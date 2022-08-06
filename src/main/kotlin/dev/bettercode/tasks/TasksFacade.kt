@@ -75,13 +75,13 @@ open class TasksFacade internal constructor(
         return projectAssignmentService.assign(task.id, projectId)
     }
 
-    fun getTasksForProject(pageable: Pageable = PageRequest.of(0, 100), project: ProjectDto): Page<TaskDto> {
-        return getTasksForProject(pageable, project.id)
+    fun getOpenTasksForProject(pageable: Pageable = PageRequest.of(0, 100), project: ProjectDto): Page<TaskDto> {
+        return getOpenTasksForProject(pageable, project.id)
     }
 
-    fun getTasksForProject(pageable: Pageable = PageRequest.of(0, 100), projectId: ProjectId): Page<TaskDto> {
+    fun getOpenTasksForProject(pageable: Pageable = PageRequest.of(0, 100), projectId: ProjectId): Page<TaskDto> {
         return projectsFacade.getProject(projectId)?.let {
-            return tasksQueryService.findAllForProject(pageable, projectId)
+            return tasksQueryService.findAllOpenForProject(pageable, projectId)
         } ?: Page.empty()
     }
 

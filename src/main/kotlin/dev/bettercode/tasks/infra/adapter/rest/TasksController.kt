@@ -67,7 +67,7 @@ class TasksController(val tasksFacade: TasksFacade, val projectsFacade: Projects
     @GetMapping("/projects/{id}/tasks")
     internal fun getTasksForProject(@PathVariable id: UUID): ResponseEntity<PageResult<TaskDto>> {
         return projectsFacade.getProject(ProjectId(id))?.let {
-            ResponseEntity.ok(PageResult(tasksFacade.getTasksForProject(PageRequest.of(0, 100), it.id)))
+            ResponseEntity.ok(PageResult(tasksFacade.getOpenTasksForProject(PageRequest.of(0, 100), it.id)))
         } ?: ResponseEntity.notFound().build()
     }
 

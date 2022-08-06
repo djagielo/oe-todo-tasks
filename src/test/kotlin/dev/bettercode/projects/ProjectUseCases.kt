@@ -59,7 +59,7 @@ internal class ProjectUseCases {
         // given - a project of name BLOG
         val blogProject = projectsFacade.addProject(ProjectDto("BLOG"))
         // and - it has no tasks
-        assertThat(tasksFacade.getTasksForProject(project = blogProject)).hasSize(0)
+        assertThat(tasksFacade.getOpenTasksForProject(project = blogProject)).hasSize(0)
         // and - 5 tasks are created
         val tasks = TasksFixtures.aNoOfTasks(5)
         tasks.forEach { tasksFacade.add(it) }
@@ -71,7 +71,7 @@ internal class ProjectUseCases {
             }
 
         // then
-        val blogTasks = tasksFacade.getTasksForProject(project = blogProject)
+        val blogTasks = tasksFacade.getOpenTasksForProject(project = blogProject)
         assertThat(blogTasks).hasSize(3)
         assertThat(blogTasks.map { it.name }).hasSameElementsAs(tasks.take(3).map { it.name })
     }
@@ -91,7 +91,7 @@ internal class ProjectUseCases {
             }
 
         // then
-        val blogTasks = tasksFacade.getTasksForProject(project = blogProject)
+        val blogTasks = tasksFacade.getOpenTasksForProject(project = blogProject)
         assertThat(blogTasks).hasSize(2)
         assertThat(blogTasks.map { it.name }).hasSameElementsAs(tasks.drop(3).map { it.name })
     }
@@ -111,7 +111,7 @@ internal class ProjectUseCases {
         assertThat(projects).hasSize(1)
         assertThat(projects.map { it.name }).containsExactly("INBOX")
         assertThat(
-            tasksFacade.getTasksForProject(
+            tasksFacade.getOpenTasksForProject(
                 project = projects.first()
             )
         ).containsExactlyInAnyOrder(*tasks.toTypedArray())
@@ -134,9 +134,9 @@ internal class ProjectUseCases {
         assertThat(projects.map { it.name }).containsExactlyInAnyOrder("INBOX", "PRIV")
 
         // and - INBOX project should have 0 tasks
-        assertThat(tasksFacade.getTasksForProject(projectId = projectsFacade.getInbox()!!.id)).isEmpty()
+        assertThat(tasksFacade.getOpenTasksForProject(projectId = projectsFacade.getInbox()!!.id)).isEmpty()
         // and - PRIV project has 1 task
-        assertThat(tasksFacade.getTasksForProject(project = privProject)).hasSize(1)
+        assertThat(tasksFacade.getOpenTasksForProject(project = privProject)).hasSize(1)
         // and - assign event gets published
         assertThat(inMemoryEventPublisher.events).contains(
             TaskAssignedToProject(task.id, privProject.id)
