@@ -1,12 +1,15 @@
 package dev.bettercode.tasks
 
 import dev.bettercode.commons.events.AuditLogCommand
-import dev.bettercode.tasks.application.tasks.TaskCompleted
-import dev.bettercode.tasks.application.tasks.TaskCreated
-import dev.bettercode.tasks.application.tasks.TaskReopened
+import dev.bettercode.config.TestConfiguration
+import dev.bettercode.fixtures.TasksFixtures
+import dev.bettercode.tasks.application.TaskCompleted
+import dev.bettercode.tasks.application.TaskCreated
+import dev.bettercode.tasks.application.TaskReopened
 import dev.bettercode.tasks.shared.InMemoryEventPublisher
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.within
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Instant
@@ -17,7 +20,12 @@ import java.time.temporal.ChronoUnit
 internal class TasksUseCases {
 
     private val eventPublisher: InMemoryEventPublisher = InMemoryEventPublisher()
-    private val tasksFacade: TasksFacade = TasksConfiguration.tasksFacade(eventPublisher)
+    private val tasksFacade: TasksFacade = TestConfiguration.tasksFacade(eventPublisher)
+
+    @BeforeEach
+    fun beforeEach() {
+        TestConfiguration.resetAll()
+    }
 
     @Test
     fun `should be able to create and get task`() {

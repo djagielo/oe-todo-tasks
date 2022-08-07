@@ -44,8 +44,8 @@ jobs:
 
       # run tests!
       - run:
-          name: Tests
-          command: ./gradlew test
+          name: Unit Tests
+          command: ./gradlew unitTests
 
       - setup_remote_docker:
           version: 19.03.13
@@ -56,6 +56,27 @@ jobs:
           command: ./gradlew bootJar
 
       - run: docker build -t bettercode.dev/oe-todo-tasks:$CIRCLE_BRANCH .
+      - store_test_results:
+          path: build/test-results
+
+  integrationTests:
+    machine:
+      image: ubuntu-2004:202010-01
+    resource_class: medium
+    steps:
+      - run:
+          name: Install OpenJDK 17
+          command: |
+            sudo apt-get update && sudo apt-get -y install openjdk-17-jdk
+            sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+            sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac
+            java -version
+
+      - checkout
+      - run: ./gradlew -x test clean build
+      - run: ./gradlew integrationTests
+      - store_test_results:
+          path: build/test-results
 
   componentTests:
     machine:
@@ -80,6 +101,9 @@ workflows:
   build_and_component_test:
     jobs:
       - build
+      - integrationTests:
+          requires:
+            - build
       - componentTests:
           requires:
             - build
