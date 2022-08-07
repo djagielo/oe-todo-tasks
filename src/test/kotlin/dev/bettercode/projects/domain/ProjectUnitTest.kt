@@ -2,6 +2,7 @@ package dev.bettercode.projects.domain
 
 import org.apache.commons.lang3.RandomStringUtils
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -59,7 +60,7 @@ internal class ProjectUnitTest {
         val result = aProject.reopen(reopenDate)
 
         // then
-        Assertions.assertThat(result.successful).isTrue
+        assertThat(result.successful).isTrue
     }
 
     @MethodSource("reopenSourceFailure")
@@ -77,7 +78,7 @@ internal class ProjectUnitTest {
         val result = aProject.reopen(reopenDate)
 
         // then
-        Assertions.assertThat(result.successful).isFalse
-        Assertions.assertThat(result.reason).isEqualTo("Project can be reopened within the same day as completed")
+        assertThat(result.successful).isFalse
+        assertThat(result.reason).isEqualTo("Project can be reopened within the same day as completed")
     }
 }

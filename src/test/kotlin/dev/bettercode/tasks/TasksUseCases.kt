@@ -17,7 +17,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
-internal class TasksUnitTests {
+internal class TasksUseCases {
 
     private val eventPublisher: InMemoryEventPublisher = InMemoryEventPublisher()
     private val tasksFacade: TasksFacade = TestConfiguration.tasksFacade(eventPublisher)

@@ -68,6 +68,7 @@ task unitTests(type: Test) {
     useJUnitPlatform {
         include '**/**UnitTests.class'
         include '**/**UnitTest.class'
+        include '**/**UseCases.class'
     }
 }
 
