@@ -57,6 +57,9 @@ jobs:
 
       - run: docker build -t bettercode.dev/oe-todo-tasks:$CIRCLE_BRANCH .
 
+      - store_test_results:
+        path: build/test-results
+
   integrationTests:
     machine:
       image: ubuntu-2004:202010-01
@@ -74,7 +77,7 @@ jobs:
       - run: ./gradlew -x test clean build
       - run: ./gradlew integrationTests
       - store_test_results:
-        path: test-results
+        path: build/test-results
 
   componentTests:
     machine:
