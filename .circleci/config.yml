@@ -73,6 +73,8 @@ jobs:
       - checkout
       - run: ./gradlew -x test clean build
       - run: ./gradlew integrationTests
+      - store_test_results:
+        path: test-results
 
   componentTests:
     machine:
