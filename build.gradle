@@ -57,8 +57,25 @@ test {
 }
 
 task componentTests(type: Test) {
+    group = 'verification'
     useJUnitPlatform {
-        include '**/TasksServiceComponentTests.class'
+        include '**/**ComponentTests.class'
+    }
+}
+
+task unitTests(type: Test) {
+    group = 'verification'
+    useJUnitPlatform {
+        include '**/**UnitTests.class'
+        include '**/**UnitTest.class'
+    }
+}
+
+task integrationTests(type: Test) {
+    group = 'verification'
+    useJUnitPlatform {
+        include '**/**IntegrationTests.class'
+        include '**/**IntegrationTest.class'
     }
 }
 

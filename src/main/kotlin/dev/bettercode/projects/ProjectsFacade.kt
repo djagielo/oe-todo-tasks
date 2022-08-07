@@ -12,31 +12,31 @@ open class ProjectsFacade internal constructor(
     private val projectsQueryService: ProjectsQueryService,
     private val projectCompletionService: ProjectCompletionService
 ) {
-    fun completeProject(project: ProjectId): DomainResult {
+    open fun completeProject(project: ProjectId): DomainResult {
         return projectCompletionService.complete(project)
     }
 
-    fun reopenProject(projectId: ProjectId): DomainResult {
+    open fun reopenProject(projectId: ProjectId): DomainResult {
         return projectCompletionService.reopen(projectId)
     }
 
-    fun getProject(projectId: ProjectId): ProjectDto? {
+    open fun getProject(projectId: ProjectId): ProjectDto? {
         return projectsQueryService.findById(projectId)
     }
 
-    fun getAllProjects(): Page<ProjectDto> {
+    open fun getAllProjects(): Page<ProjectDto> {
         return projectsQueryService.getAll()
     }
 
-    fun getOpenProjects(): Page<ProjectDto> {
+    open fun getOpenProjects(): Page<ProjectDto> {
         return projectsQueryService.getAllOpen()
     }
 
-    fun addProject(project: ProjectDto): ProjectDto {
+    open fun addProject(project: ProjectDto): ProjectDto {
         return ProjectDto.from(projectService.add(Project(name = project.name)))!!
     }
 
-    fun deleteProject(project: ProjectDto, forced: Boolean = false) {
+    open fun deleteProject(project: ProjectDto, forced: Boolean = false) {
         deleteProject(projectId = project.id, forced = forced)
     }
 

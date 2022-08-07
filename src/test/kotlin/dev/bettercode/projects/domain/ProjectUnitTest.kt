@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.stream.Stream
 
-internal class ProjectTest {
+internal class ProjectUnitTest {
 
     companion object {
         @JvmStatic

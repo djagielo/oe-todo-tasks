@@ -13,7 +13,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class ProjectUseCases {
+internal class ProjectsUnitTests {
 
     private val inMemoryEventPublisher = InMemoryEventPublisher()
     private val tasksFacade: TasksFacade =

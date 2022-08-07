@@ -1,5 +1,5 @@
 package dev.bettercode.tasks.infra.adapter.rest
 
-internal class TasksControllerTest {
+internal class TasksControllerUnitTest {
     // mockMvc tests
 }

@@ -10,7 +10,7 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
 
-class TaskTest {
+class TaskUnitTest {
 
     @Test
     fun `should fail to set dueDate when task completed`() {
