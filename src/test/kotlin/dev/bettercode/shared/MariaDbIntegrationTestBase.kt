@@ -1,12 +1,9 @@
 package dev.bettercode.shared
 
-import dev.bettercode.componentTests.TasksServiceComponentTests
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.test.context.ContextConfiguration
-import org.testcontainers.containers.MariaDBContainer
-import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @Testcontainers

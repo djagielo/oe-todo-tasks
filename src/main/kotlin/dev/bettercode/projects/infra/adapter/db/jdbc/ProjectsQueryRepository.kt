@@ -1,6 +1,5 @@
 package dev.bettercode.projects.infra.adapter.db.jdbc
 
-import dev.bettercode.projects.infra.adapter.db.jdbc.ProjectEntity
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
