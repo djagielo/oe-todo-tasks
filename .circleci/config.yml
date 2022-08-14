@@ -136,8 +136,7 @@ workflows:
                 - main
       - pushImage:
           requires:
-            - integrationTests
-            - componentTests
+            - build
           filters:
             branches:
               only:
