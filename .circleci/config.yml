@@ -96,9 +96,27 @@ jobs:
       - run: docker build -t bettercode.dev/oe-todo-tasks:$CIRCLE_BRANCH .
       - run: ./gradlew componentTests
 
+  pushImage:
+    docker:
+      - image: cimg/openjdk:17.0.3
+    working_directory: ~/repo
+    steps:
+      - run: ./gradlew -x test bootJar
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: true
+      - run:
+          name: Build Docker image
+          command: docker tag bettercode.dev/oe-todo-tasks:$CIRCLE_BRANCH djagielo/oe-todo-tasks:main-$CIRCLE_SHA1 .
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin
+            docker push djagielo/oe-todo-tasks:main-$CIRCLE_SHA1
+
 workflows:
   version: 2
-  build_and_component_test:
+  build_test_push_image:
     jobs:
       - build
       - integrationTests:
@@ -107,3 +125,14 @@ workflows:
       - componentTests:
           requires:
             - build
+      - pushImage:
+          requires:
+            - integrationTests
+            - componentTests
+          filters:
+            branches:
+              only:
+                - main
+                - publish-docker-image
+          context:
+            - oe-todo
