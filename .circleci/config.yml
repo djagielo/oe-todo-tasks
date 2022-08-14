@@ -123,9 +123,17 @@ workflows:
       - integrationTests:
           requires:
             - build
+          filters:
+            branches:
+              only:
+                - main
       - componentTests:
           requires:
             - build
+          filters:
+            branches:
+              only:
+                - main
       - pushImage:
           requires:
             - integrationTests
