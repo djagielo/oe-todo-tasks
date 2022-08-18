@@ -9,6 +9,7 @@ import dev.bettercode.tasks.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -65,9 +66,9 @@ class TasksController(val tasksFacade: TasksFacade, val projectsFacade: Projects
     }
 
     @GetMapping("/projects/{id}/tasks")
-    internal fun getTasksForProject(@PathVariable id: UUID): ResponseEntity<PageResult<TaskDto>> {
+    internal fun getTasksForProject(@PathVariable id: UUID, pageable: Pageable): ResponseEntity<PageResult<TaskDto>> {
         return projectsFacade.getProject(ProjectId(id))?.let {
-            ResponseEntity.ok(PageResult(tasksFacade.getOpenTasksForProject(PageRequest.of(0, 100), it.id)))
+            ResponseEntity.ok(PageResult(tasksFacade.getOpenTasksForProject(pageable, it.id)))
         } ?: ResponseEntity.notFound().build()
     }
 
