@@ -1,0 +1,22 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: oe-todo-config-map
+  labels:
+    {{- include "oe-todo-tasks-deploy.labels" . | nindent 4 }}
+data:
+  application.yml: |-
+    server:
+      port: 9991
+    spring:
+      datasource:
+        url: jdbc:mariadb://my-release-mariadb:3306/overengineered-todo
+        username: root
+        password: secretpassword
+        initialization-mode: always
+      jpa:
+        show-sql: true
+        generate-ddl: true
+        properties:
+          hibernate:
+            format_sql: true
