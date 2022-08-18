@@ -3,6 +3,7 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "oe-todo-tasks-deploy.fullname" . }}
+  namespace: default
   labels:
     {{- include "oe-todo-tasks-deploy.labels" . | nindent 4 }}
 spec:

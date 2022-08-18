@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "oe-todo-tasks-deploy.fullname" . }}-nodeport
+  namespace: default
   labels:
     {{- include "oe-todo-tasks-deploy.labels" . | nindent 4 }}
 spec:

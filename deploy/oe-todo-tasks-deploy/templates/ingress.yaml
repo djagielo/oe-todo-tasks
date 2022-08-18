@@ -16,6 +16,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
+  namespace: default
   labels:
     {{- include "oe-todo-tasks-deploy.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
