@@ -93,8 +93,8 @@ jobs:
 
       - checkout
       - run: ./gradlew -x test clean build bootJar
-      - run: docker build -t bettercode.dev/oe-todo-tasks:$CIRCLE_BRANCH .
-      - run: ./gradlew componentTests -Dspring.config.location=./config
+      - run: docker build -f Dockerfile-ct -t bettercode.dev/oe-todo-tasks:$CIRCLE_BRANCH .
+      - run: ./gradlew componentTests
 
   pushImage:
     docker:
