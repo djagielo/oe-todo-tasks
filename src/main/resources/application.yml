@@ -2,9 +2,9 @@ server:
   port: 9991
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3306/overengineered-todo
+    url: jdbc:mariadb://westworld:30006/overengineered-todo
     username: root
-    password: password
+    password: secretpassword
     initialization-mode: always
   jpa:
     show-sql: true
@@ -12,3 +12,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  rabbitmq:
+    host: westworld
+    port: 31672
+    username: admin
+    password: admin

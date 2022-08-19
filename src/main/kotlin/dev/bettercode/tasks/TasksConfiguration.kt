@@ -16,7 +16,9 @@ import dev.bettercode.tasks.query.ProjectsQueryService
 import dev.bettercode.tasks.query.TasksQueryService
 import dev.bettercode.tasks.shared.DomainEventPublisher
 import dev.bettercode.tasks.shared.InMemoryEventPublisher
+import dev.bettercode.tasks.shared.RabbitEventPublisher
 import dev.bettercode.tasks.shared.SpringEventPublisher
+import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
@@ -92,8 +94,9 @@ class TasksConfiguration {
 
 
     @Bean
-    internal fun domainEventPublisher(eventPublisher: ApplicationEventPublisher): DomainEventPublisher {
-        return SpringEventPublisher(eventPublisher)
+    internal fun domainEventPublisher(rabbitTemplate: RabbitTemplate): DomainEventPublisher {
+        return RabbitEventPublisher(rabbitTemplate = rabbitTemplate)
+        //return SpringEventPublisher(eventPublisher)
     }
 
     @Bean
