@@ -55,12 +55,15 @@ class TasksServiceComponentTests {
         private val db: MariaDBContainer<*> = KMariaDBContainer("mariadb:10.6")
             .withNetwork(network)
             .withNetworkAliases("mariadb")
+            .withInitScript("schema.sql")
 
         private val rabbit: RabbitMQContainer = RabbitMQContainer("rabbitmq:3.7.25-management-alpine")
             .withNetwork(network)
             .withNetworkAliases("rabbitmq")
             .withUser("admin", "admin")
             .withPermission("/", "admin", ".*", ".*", ".*")
+            .withExchange("oe-todo-tasks.projectCreated", "fanout")
+            .withExchange("oe-todo-tasks.taskCreated", "fanout")
 
         @JvmStatic
         @BeforeAll
