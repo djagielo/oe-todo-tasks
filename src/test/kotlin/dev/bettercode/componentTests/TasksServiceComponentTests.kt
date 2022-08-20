@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.MariaDBContainer
 import org.testcontainers.containers.Network
+import org.testcontainers.containers.RabbitMQContainer
 import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
@@ -55,10 +56,17 @@ class TasksServiceComponentTests {
             .withNetwork(network)
             .withNetworkAliases("mariadb")
 
+        private val rabbit: RabbitMQContainer = RabbitMQContainer("rabbitmq:3.7.25-management-alpine")
+            .withNetwork(network)
+            .withNetworkAliases("rabbitmq")
+            .withUser("admin", "admin")
+            .withPermission("/", "admin", ".*", ".*", ".*")
+
         @JvmStatic
         @BeforeAll
         fun beforeAll() {
             db.start()
+            rabbit.start()
             service
                 .withEnv("MARIA_DB_URL", "jdbc:mariadb://mariadb:3306/test")
                 .withEnv("MARIA_DB_USER", db.username)
@@ -70,6 +78,7 @@ class TasksServiceComponentTests {
         internal fun tearDown() {
             service.stop()
             db.stop()
+            rabbit.stop()
         }
     }
 

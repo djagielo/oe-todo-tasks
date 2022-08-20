@@ -24,7 +24,7 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
-import org.springframework.context.annotation.Profile
+import org.springframework.core.env.Environment
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.jdbc.core.JdbcTemplate
 
@@ -94,16 +94,9 @@ class TasksConfiguration {
     }
 
 
-    @Profile("!ct")
     @Bean
-    internal fun domainEventPublisher(rabbitTemplate: RabbitTemplate): DomainEventPublisher {
+    internal fun domainEventPublisher(eventPublisher: ApplicationEventPublisher, rabbitTemplate: RabbitTemplate): DomainEventPublisher {
         return RabbitEventPublisher(rabbitTemplate = rabbitTemplate)
-    }
-
-    @Profile("ct")
-    @Bean
-    internal fun domainEventPublisher(eventPublisher: ApplicationEventPublisher): DomainEventPublisher {
-        return SpringEventPublisher(eventPublisher)
     }
 
     @Bean
