@@ -63,6 +63,7 @@ class TasksServiceComponentTests {
             .withUser("admin", "admin")
             .withPermission("/", "admin", ".*", ".*", ".*")
             .withExchange("oe-todo-tasks.projectCreated", "fanout")
+            .withExchange("oe-todo-tasks.projectDeleted", "fanout")
             .withExchange("oe-todo-tasks.taskCreated", "fanout")
 
         @JvmStatic

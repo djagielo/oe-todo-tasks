@@ -2,6 +2,7 @@
 
 package dev.bettercode.tasks
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import dev.bettercode.projects.ProjectsFacade
 import dev.bettercode.projects.application.ProjectCompletionService
 import dev.bettercode.projects.application.ProjectService
@@ -12,21 +13,25 @@ import dev.bettercode.tasks.infra.adapter.db.jdbc.JdbcTasksRepository
 import dev.bettercode.tasks.infra.adapter.db.jdbc.TaskEntity
 import dev.bettercode.tasks.infra.adapter.db.jdbc.TasksQueryRepository
 import dev.bettercode.tasks.infra.adapter.events.ProjectsSpringEventsListener
+import dev.bettercode.tasks.infra.adapter.rabbit.listener.RabbitProjectEventsListener
 import dev.bettercode.tasks.query.ProjectsQueryService
 import dev.bettercode.tasks.query.TasksQueryService
 import dev.bettercode.tasks.shared.DomainEventPublisher
 import dev.bettercode.tasks.shared.InMemoryEventPublisher
 import dev.bettercode.tasks.shared.RabbitEventPublisher
-import dev.bettercode.tasks.shared.SpringEventPublisher
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory
+import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
+import org.springframework.boot.autoconfigure.amqp.SimpleRabbitListenerContainerFactoryConfigurer
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
-import org.springframework.core.env.Environment
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.jdbc.core.JdbcTemplate
+
 
 @Configuration
 @EnableJpaRepositories("dev.bettercode.tasks.infra.adapter.db.jdbc")
@@ -95,7 +100,10 @@ class TasksConfiguration {
 
 
     @Bean
-    internal fun domainEventPublisher(eventPublisher: ApplicationEventPublisher, rabbitTemplate: RabbitTemplate): DomainEventPublisher {
+    internal fun domainEventPublisher(
+        eventPublisher: ApplicationEventPublisher,
+        rabbitTemplate: RabbitTemplate
+    ): DomainEventPublisher {
         return RabbitEventPublisher(rabbitTemplate = rabbitTemplate)
     }
 
@@ -123,5 +131,33 @@ class TasksConfiguration {
             projectDeletedHandler = projectDeletedHandler,
             projectCompletedHandler = projectCompletedHandler
         )
+    }
+
+    @Bean
+    internal fun projectEventsRabbitHandler(
+        projectDeletedHandler: ProjectDeletedHandler,
+        projectCompletedHandler: ProjectCompletedHandler
+    ): RabbitProjectEventsListener {
+        return RabbitProjectEventsListener(projectDeletedHandler)
+    }
+
+    @Bean
+    internal fun rabbitTemplate(connectionFactory: ConnectionFactory, mapper: ObjectMapper): RabbitTemplate {
+        val jsonRabbitTemplate = RabbitTemplate(connectionFactory);
+        jsonRabbitTemplate.messageConverter = Jackson2JsonMessageConverter(mapper)
+        return jsonRabbitTemplate
+
+    }
+
+    @Bean
+    fun customFactory(
+        configurer: SimpleRabbitListenerContainerFactoryConfigurer,
+        connectionFactory: ConnectionFactory?
+    ): SimpleRabbitListenerContainerFactory? {
+        val factory = SimpleRabbitListenerContainerFactory()
+        // Set up message converter
+        factory.setMessageConverter(Jackson2JsonMessageConverter())
+        configurer.configure(factory, connectionFactory)
+        return factory
     }
 }

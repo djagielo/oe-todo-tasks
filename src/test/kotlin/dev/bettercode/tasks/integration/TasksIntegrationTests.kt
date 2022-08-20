@@ -7,7 +7,6 @@ import dev.bettercode.shared.IntegrationTestBase
 import dev.bettercode.tasks.TasksFacade
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -17,6 +16,9 @@ import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.RabbitMQContainer
 import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.shaded.org.awaitility.Awaitility
+import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 
 @SpringBootTest
@@ -87,7 +89,6 @@ class TasksIntegrationTests: IntegrationTestBase() {
     }
 
     @Test
-    @Disabled
     fun `should move tasks for a given project to INBOX when it's deleted with force flag off`() {
         // given - a saved task
         val blogTasks = TasksFixtures.aNoOfTasks(3)
@@ -103,9 +104,9 @@ class TasksIntegrationTests: IntegrationTestBase() {
         projectsFacade.deleteProject(blogProject, forced = false)
 
         // then - the task should be marked as completed and completion date should be set
-        assertThat(tasksFacade.getOpenInboxTasks(Pageable.ofSize(10))).hasSize(
-            blogTasks.size + inboxTasks.size
-        )
+        Awaitility.await().pollInterval(Duration.ofSeconds(1)).atMost(5, TimeUnit.SECONDS).until {
+            tasksFacade.getOpenInboxTasks(Pageable.ofSize(10)).content.size == blogTasks.size + inboxTasks.size
+        }
     }
 
     @Test
