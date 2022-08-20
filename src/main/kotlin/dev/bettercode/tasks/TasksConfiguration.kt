@@ -149,14 +149,20 @@ class TasksConfiguration {
 
     }
 
+    companion object {
+        const val RABBIT_LISTENER_FACTORY_NAME: String = "rabbitListenerFactory"
+    }
+
     @Bean
-    fun customFactory(
+    fun rabbitListenerFactory(
         configurer: SimpleRabbitListenerContainerFactoryConfigurer,
-        connectionFactory: ConnectionFactory?
-    ): SimpleRabbitListenerContainerFactory? {
-        val factory = SimpleRabbitListenerContainerFactory()
-        // Set up message converter
-        factory.setMessageConverter(Jackson2JsonMessageConverter())
+        connectionFactory: ConnectionFactory
+    ): SimpleRabbitListenerContainerFactory {
+        val factory = SimpleRabbitListenerContainerFactory().apply {
+            // Set up message converter
+            setMessageConverter(Jackson2JsonMessageConverter())
+        }
+
         configurer.configure(factory, connectionFactory)
         return factory
     }
