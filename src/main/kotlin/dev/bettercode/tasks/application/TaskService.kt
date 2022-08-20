@@ -31,6 +31,7 @@ internal class TaskService(
     fun addTaskForAProject(task: Task, projectId: ProjectId): Task? {
         return projectRepository.get(projectId)?.let {
             task.assignTo(it)
+            eventPublisher.publish(TaskCreated(taskId = task.id))
             return tasksRepository.add(task)
         }
     }

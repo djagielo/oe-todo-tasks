@@ -3,7 +3,7 @@ package dev.bettercode.tasks.integration
 import dev.bettercode.fixtures.TasksFixtures
 import dev.bettercode.projects.ProjectDto
 import dev.bettercode.projects.ProjectsFacade
-import dev.bettercode.shared.MariaDbIntegrationTestBase
+import dev.bettercode.shared.IntegrationTestBase
 import dev.bettercode.tasks.TasksFacade
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -12,10 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.RabbitMQContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.shaded.org.awaitility.Awaitility
+import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 
 @SpringBootTest
-class TasksIntegrationTests: MariaDbIntegrationTestBase() {
+class TasksIntegrationTests: IntegrationTestBase() {
 
     @Autowired
     lateinit var tasksFacade: TasksFacade
@@ -23,11 +30,26 @@ class TasksIntegrationTests: MariaDbIntegrationTestBase() {
     @Autowired
     lateinit var projectsFacade: ProjectsFacade
 
+    companion object {
+        @Container
+        val rabbit: RabbitMQContainer = rabbitMQContainer()
+        @DynamicPropertySource
+        @JvmStatic
+        fun configure(registry: DynamicPropertyRegistry) {
+            registry.add("spring.rabbitmq.host", rabbit::getHost)
+            registry.add("spring.rabbitmq.port", rabbit::getAmqpPort)
+        }
+    }
+
 
     @AfterEach
     fun afterEach() {
         tasksFacade.getAllOpen(Pageable.ofSize(100)).forEach {
             tasksFacade.delete(it.id)
+        }
+
+        projectsFacade.getAllProjects().forEach {
+            projectsFacade.deleteProject(it.id, forced = true)
         }
     }
 
@@ -82,9 +104,9 @@ class TasksIntegrationTests: MariaDbIntegrationTestBase() {
         projectsFacade.deleteProject(blogProject, forced = false)
 
         // then - the task should be marked as completed and completion date should be set
-        assertThat(tasksFacade.getOpenInboxTasks(Pageable.ofSize(10))).hasSize(
-            blogTasks.size + inboxTasks.size
-        )
+        Awaitility.await().pollInterval(Duration.ofSeconds(1)).atMost(5, TimeUnit.SECONDS).until {
+            tasksFacade.getOpenInboxTasks(Pageable.ofSize(10)).content.size == blogTasks.size + inboxTasks.size
+        }
     }
 
     @Test

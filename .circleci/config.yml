@@ -92,8 +92,8 @@ jobs:
             java -version
 
       - checkout
-      - run: ./gradlew clean build bootJar
-      - run: docker build -t bettercode.dev/oe-todo-tasks:$CIRCLE_BRANCH .
+      - run: ./gradlew -x test clean build bootJar
+      - run: docker build -f Dockerfile-ct -t bettercode.dev/oe-todo-tasks:$CIRCLE_BRANCH .
       - run: ./gradlew componentTests
 
   pushImage:
