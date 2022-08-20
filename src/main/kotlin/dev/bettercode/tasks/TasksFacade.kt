@@ -49,7 +49,7 @@ open class TasksFacade internal constructor(
         return tasksQueryService.findById(id)
     }
 
-    fun getOpenInboxTasks(pageable: Pageable = PageRequest.of(0, 100)): Page<TaskDto> {
+    open fun getOpenInboxTasks(pageable: Pageable = PageRequest.of(0, 100)): Page<TaskDto> {
         return projectsFacade.getInbox()?.let {
             tasksQueryService.findAllOpenForProject(pageable, it.id)
         } ?: Page.empty()

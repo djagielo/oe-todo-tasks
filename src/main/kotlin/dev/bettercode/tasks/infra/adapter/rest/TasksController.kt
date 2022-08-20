@@ -5,7 +5,9 @@ package dev.bettercode.tasks.infra.adapter.rest
 import dev.bettercode.commons.paging.PageResult
 import dev.bettercode.projects.ProjectId
 import dev.bettercode.projects.ProjectsFacade
-import dev.bettercode.tasks.*
+import dev.bettercode.tasks.TaskDto
+import dev.bettercode.tasks.TaskId
+import dev.bettercode.tasks.TasksFacade
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
@@ -77,6 +79,13 @@ class TasksController(val tasksFacade: TasksFacade, val projectsFacade: Projects
         return projectsFacade.getProject(ProjectId(id))?.let { project ->
             ResponseEntity.ok(tasksFacade.addToProject(task.toTaskDto(), project))
         } ?: ResponseEntity.notFound().build()
+    }
+
+    @GetMapping("/inbox/tasks")
+    internal fun getInboxTasks(pageable: Pageable): ResponseEntity<PageResult<TaskDto>> {
+        return ResponseEntity.ok(
+            PageResult(tasksFacade.getOpenInboxTasks(pageable))
+        )
     }
 
     @ExceptionHandler(Exception::class)
