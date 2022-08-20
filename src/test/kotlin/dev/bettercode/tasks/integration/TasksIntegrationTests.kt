@@ -3,19 +3,24 @@ package dev.bettercode.tasks.integration
 import dev.bettercode.fixtures.TasksFixtures
 import dev.bettercode.projects.ProjectDto
 import dev.bettercode.projects.ProjectsFacade
-import dev.bettercode.shared.MariaDbIntegrationTestBase
+import dev.bettercode.shared.IntegrationTestBase
 import dev.bettercode.tasks.TasksFacade
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.RabbitMQContainer
+import org.testcontainers.junit.jupiter.Container
 
 
 @SpringBootTest
-class TasksIntegrationTests: MariaDbIntegrationTestBase() {
+class TasksIntegrationTests: IntegrationTestBase() {
 
     @Autowired
     lateinit var tasksFacade: TasksFacade
@@ -23,11 +28,26 @@ class TasksIntegrationTests: MariaDbIntegrationTestBase() {
     @Autowired
     lateinit var projectsFacade: ProjectsFacade
 
+    companion object {
+        @Container
+        val rabbit: RabbitMQContainer = rabbitMQContainer()
+        @DynamicPropertySource
+        @JvmStatic
+        fun configure(registry: DynamicPropertyRegistry) {
+            registry.add("spring.rabbitmq.host", rabbit::getHost)
+            registry.add("spring.rabbitmq.port", rabbit::getAmqpPort)
+        }
+    }
+
 
     @AfterEach
     fun afterEach() {
         tasksFacade.getAllOpen(Pageable.ofSize(100)).forEach {
             tasksFacade.delete(it.id)
+        }
+
+        projectsFacade.getAllProjects().forEach {
+            projectsFacade.deleteProject(it.id, forced = true)
         }
     }
 
@@ -67,6 +87,7 @@ class TasksIntegrationTests: MariaDbIntegrationTestBase() {
     }
 
     @Test
+    @Disabled
     fun `should move tasks for a given project to INBOX when it's deleted with force flag off`() {
         // given - a saved task
         val blogTasks = TasksFixtures.aNoOfTasks(3)

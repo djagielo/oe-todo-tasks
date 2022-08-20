@@ -2,18 +2,33 @@ package dev.bettercode.projects.integration
 
 import dev.bettercode.projects.ProjectDto
 import dev.bettercode.projects.ProjectsFacade
-import dev.bettercode.shared.MariaDbIntegrationTestBase
+import dev.bettercode.shared.IntegrationTestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.RabbitMQContainer
+import org.testcontainers.junit.jupiter.Container
 
 @SpringBootTest
-class ProjectsIntegrationTests: MariaDbIntegrationTestBase() {
+class ProjectsIntegrationTests : IntegrationTestBase() {
 
     @Autowired
     private lateinit var projectsFacade: ProjectsFacade
+
+    companion object {
+        @Container
+        val rabbit: RabbitMQContainer = rabbitMQContainer()
+        @DynamicPropertySource
+        @JvmStatic
+        fun configure(registry: DynamicPropertyRegistry) {
+            registry.add("spring.rabbitmq.host", rabbit::getHost)
+            registry.add("spring.rabbitmq.port", rabbit::getAmqpPort)
+        }
+    }
 
     @AfterEach
     fun afterEach() {
