@@ -9,14 +9,14 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 
 class RabbitEventPublisher(private val rabbitTemplate: RabbitTemplate) : DomainEventPublisher {
     private val mapping = mapOf(
-        ProjectCreated::class to "oe-todo-tasks.projectCreated",
-        ProjectDeleted::class to "oe-todo-tasks.projectDeleted",
-        TaskCreated::class to "oe-todo-tasks.taskCreated",
+        ProjectCreated::class to "projectCreated",
+        ProjectDeleted::class to "projectDeleted",
+        TaskCreated::class to "taskCreated",
     )
 
     override fun publish(event: DomainEvent) {
         mapping[event::class]?.let {
-            rabbitTemplate.convertAndSend(it, "", convert(event))
+            rabbitTemplate.convertAndSend("oe-todo", it, convert(event))
         }
     }
 

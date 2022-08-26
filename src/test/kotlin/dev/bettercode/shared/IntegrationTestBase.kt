@@ -18,14 +18,12 @@ open class IntegrationTestBase {
                 .withNetworkAliases("rabbitmq")
                 .withUser("admin", "admin")
                 .withPermission("/", "admin", ".*", ".*", ".*")
-                .withExchange("oe-todo-tasks.projectCreated", "fanout")
-                .withExchange("oe-todo-tasks.projectDeleted", "fanout")
-                .withExchange("oe-todo-tasks.taskCreated", "fanout")
+                .withExchange("oe-todo", "direct")
                 .withQueue("audit")
                 .withQueue("dynamic-projects")
                 .withQueue("karma")
                 .withQueue("tasks")
-                .withBinding("oe-todo-tasks.projectDeleted", "tasks")
+                .withBinding("oe-todo", "tasks", mapOf(), "projectDeleted", "queue")
                 .withExposedPorts(5672)
         }
     }
